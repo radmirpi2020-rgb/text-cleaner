@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Очиститель текста: убирает лишние пробелы, переносы, HTML-теги, нормализует кавычки и тире, меняет регистр, сортирует строки и убирает дубликаты. Всё работает локально в браузере.">
+  <meta name="theme-color" content="#4f46e5">
+  <title>Очиститель текста</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234f46e5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z'/%3E%3Cpath d='M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9z'/%3E%3C/svg%3E">
+  <link rel="apple-touch-icon" href="build/icon.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#text-in">Перейти к содержимому</a>
+
+  <header class="topbar">
+    <div class="topbar__brand" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"></path>
+        <path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9z"></path>
+      </svg>
+    </div>
+    <h1 class="topbar__title">Очиститель текста</h1>
+    <span class="version-badge" id="version-badge">v1.2.0</span>
+    <div class="topbar__actions">
+      <button id="example-btn" class="btn btn--ghost btn--sm" type="button">Пример</button>
+      <button id="theme-btn" class="icon-btn" type="button" aria-label="Переключить тему" title="Переключить тему">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <div class="workspace">
+
+      <section class="pane" aria-label="Исходный текст">
+        <div class="pane__head">
+          <h2 class="pane__title">Исходный текст</h2>
+          <div class="pane__actions">
+            <button id="file-btn" class="btn btn--ghost btn--sm" type="button" title="Открыть текстовый файл (.txt, .md, .csv, .log…)">Файл</button>
+            <input id="file-input" type="file" accept=".txt,.md,.csv,.log,.json,.xml,.html,text/plain" hidden>
+            <button id="paste-btn" class="btn btn--ghost btn--sm" type="button" title="Вставить из буфера обмена">Вставить</button>
+            <button id="undo-btn" class="btn btn--ghost btn--sm" type="button" title="Отменить последнее изменение (Ctrl+Z)" disabled>Отменить</button>
+            <button id="clear-btn" class="btn btn--danger-ghost btn--sm" type="button">Очистить</button>
+          </div>
+        </div>
+        <textarea id="text-in" class="pane__textarea" placeholder="Вставьте текст сюда — например, скопированный из PDF, сайта или Word…" spellcheck="false"></textarea>
+      </section>
+
+      <aside class="toolbar" aria-label="Операции">
+        <h2 class="toolbar__title">Операции</h2>
+
+        <div class="toolbar__group" role="group" aria-label="Пробелы и строки">
+          <button class="chip" type="button" data-op="spaces" aria-pressed="false">Убрать лишние пробелы</button>
+          <button class="chip" type="button" data-op="hyphens" aria-pressed="false">Убрать переносы</button>
+          <button class="chip" type="button" data-op="paragraphs" aria-pressed="false">Соединить строки в абзацы</button>
+          <button class="chip" type="button" data-op="blank" aria-pressed="false">Удалить пустые строки</button>
+        </div>
+
+        <div class="toolbar__group" role="group" aria-label="Разметка">
+          <button class="chip" type="button" data-op="html" aria-pressed="false">Удалить HTML</button>
+          <button class="chip" type="button" data-op="markdown" aria-pressed="false">Убрать Markdown</button>
+          <button class="chip" type="button" data-op="quotes" aria-pressed="false">Кавычки и тире</button>
+        </div>
+
+        <div class="toolbar__group" role="group" aria-label="Строки">
+          <button class="chip" type="button" data-op="sort" aria-pressed="false">Сортировать строки</button>
+          <button class="chip" type="button" data-op="dedupe" aria-pressed="false">Убрать дубликаты</button>
+        </div>
+
+        <div class="toolbar__group" role="group" aria-label="Язык">
+          <button class="chip" type="button" data-op="translit" aria-pressed="false">Транслитерация</button>
+        </div>
+
+        <div class="toolbar__group" role="group" aria-label="Конфиденциальность">
+          <button class="chip" type="button" data-op="pii" aria-pressed="false">Скрыть личные данные</button>
+        </div>
+
+        <div class="field">
+          <label for="format-select">Формат</label>
+          <select id="format-select">
+            <option value="off">Не менять</option>
+            <option value="json">JSON</option>
+            <option value="xml">XML</option>
+            <option value="sql">SQL</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="case-select">Регистр</label>
+          <select id="case-select">
+            <option value="keep">Не менять</option>
+            <option value="lower">нижний регистр</option>
+            <option value="upper">ВЕРХНИЙ РЕГИСТР</option>
+            <option value="sentence">С заглавной буквы</option>
+            <option value="title">Каждое слово с заглавной</option>
+          </select>
+        </div>
+
+        <details class="replace">
+          <summary>Поиск и замена</summary>
+          <div class="replace__body">
+            <div class="field">
+              <label for="find">Найти</label>
+              <input id="find" type="text" spellcheck="false" placeholder="слово или фраза">
+            </div>
+            <div class="field">
+              <label for="replace">Заменить на</label>
+              <input id="replace" type="text" spellcheck="false" placeholder="…">
+            </div>
+            <label class="check">
+              <input type="checkbox" id="replace-case">
+              <span>Учитывать регистр</span>
+            </label>
+            <label class="check">
+              <input type="checkbox" id="replace-regex">
+              <span>Рег. выражение</span>
+            </label>
+            <button id="replace-btn" class="btn btn--primary btn--block" type="button">Заменить все</button>
+          </div>
+        </details>
+
+        <details class="replace">
+          <summary>Сценарии операций</summary>
+          <div class="replace__body">
+            <div class="field">
+              <label for="profile-name">Название</label>
+              <input id="profile-name" type="text" spellcheck="false" placeholder="например, «Для PDF»">
+            </div>
+            <div class="profile-row">
+              <button id="profile-save" class="btn btn--ghost btn--block" type="button">Сохранить</button>
+              <button id="profile-delete" class="btn btn--danger-ghost btn--block" type="button">Удалить</button>
+            </div>
+            <div class="field">
+              <label for="profile-select">Применить</label>
+              <select id="profile-select"></select>
+            </div>
+          </div>
+        </details>
+
+        <label class="check check--persist" title="Восстановит последний текст при открытии страницы">
+          <input type="checkbox" id="persist-check">
+          <span>Сохранять последний текст</span>
+        </label>
+      </aside>
+
+      <section class="pane pane--output" aria-label="Результат">
+        <div class="pane__head">
+          <h2 class="pane__title">Результат</h2>
+          <div class="pane__actions">
+            <button id="diff-btn" class="btn btn--ghost btn--sm" type="button" aria-pressed="false" title="Показать изменения построчно">Дифф</button>
+            <button id="history-btn" class="btn btn--ghost btn--sm" type="button" title="История скопированных текстов">История</button>
+            <button id="copy-btn" class="btn btn--primary btn--sm" type="button" title="Копировать результат (Ctrl+C)">Копировать</button>
+            <button id="download-btn" class="btn btn--ghost btn--sm" type="button" title="Скачать результат как .txt">Скачать .txt</button>
+          </div>
+        </div>
+        <textarea id="text-out" class="pane__textarea" readonly placeholder="Очищенный текст появится здесь…" spellcheck="false"></textarea>
+        <div id="diff-view" class="diff" hidden></div>
+      </section>
+
+    </div>
+
+    <footer class="stats" aria-live="polite">
+      <span id="st-in" class="stats__item">Исходный: —</span>
+      <span class="stats__dot" aria-hidden="true">•</span>
+      <span id="st-out" class="stats__item">Результат: —</span>
+    </footer>
+  </main>
+
+  <div id="toasts" class="toasts" aria-live="polite" aria-atomic="false"></div>
+
+  <dialog id="history-dialog" class="dialog">
+    <div class="dialog__head">
+      <h2 class="dialog__title">История буфера обмена</h2>
+      <div class="dialog__actions">
+        <button id="history-clear" class="btn btn--ghost btn--sm" type="button">Очистить</button>
+        <button id="history-close" class="icon-btn" type="button" aria-label="Закрыть">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="history-list" class="history-list"></div>
+  </dialog>
+
+  <script>
+    if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('sw.js').catch(function () {});
+      });
+    }
+  </script>
+  <script src="app.js"></script>
+</body>
+</html>

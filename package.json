@@ -1,0 +1,45 @@
+{
+  "name": "text-cleaner",
+  "productName": "Очиститель текста",
+  "version": "3.0.0",
+  "description": "Очиститель и форматировщик текста: пробелы, переносы, кавычки, регистр, HTML, дубликаты. Работает полностью локально.",
+  "author": "text-cleaner",
+  "license": "MIT",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "gen:icon": "node scripts/gen-icon.js",
+    "build:win": "electron-builder --win portable"
+  },
+  "devDependencies": {
+    "electron": "latest",
+    "electron-builder": "latest"
+  },
+  "build": {
+    "appId": "ru.textcleaner.app",
+    "productName": "Очиститель текста",
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "index.html",
+      "styles.css",
+      "app.js"
+    ],
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "portable": {
+      "artifactName": "Очиститель-текста-3.0.exe"
+    }
+  }
+}

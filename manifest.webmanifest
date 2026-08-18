@@ -1,0 +1,18 @@
+{
+  "name": "Очиститель текста",
+  "short_name": "Очиститель",
+  "description": "Приводит скопированный текст в порядок за один клик: пробелы, переносы, кавычки, регистр, HTML, Markdown, личные данные, JSON/XML/SQL. Работает полностью локально.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f5fa",
+  "theme_color": "#4f46e5",
+  "lang": "ru",
+  "icons": [
+    {
+      "src": "build/icon.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    }
+  ]
+}
